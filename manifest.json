@@ -1,0 +1,1 @@
+{"name":"Speed Guard","short_name":"Speed Guard","description":"Assistente offline per velocità e guida sicura.","start_url":"/","display":"standalone","background_color":"#06130d","theme_color":"#16d47b","orientation":"portrait","icons":[{"src":"/src/assets/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
