@@ -1,0 +1,1 @@
+let last=0;export function speak(text,settings={}){if(!('speechSynthesis'in window))return;const now=Date.now();if(now-last<2500)return;last=now;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='it-IT';u.volume=settings.volume??0.9;u.rate=.95;speechSynthesis.speak(u)}
