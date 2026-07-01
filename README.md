@@ -31,6 +31,10 @@ Poi aprire l'URL mostrato da Vite. Per GPS reale in browser serve `localhost` o 
 
 Non è obbligatorio creare subito un sito Vercel per l'APK, ma è consigliato per avere una demo HTTPS, una landing page e in futuro una pagina download APK o pacchetti database statici. La configurazione `vercel.json` è già inclusa: Vercel deve eseguire `npm run build` e pubblicare la cartella `dist`. Guida completa in `docs/deploy-vercel.md`.
 
+## Pronto per develop e smartphone
+
+La UI è ottimizzata per smartphone web/PWA e APK con safe-area, pulsanti grandi, tab scrollabili e modalità landscape compatta. Checklist completa in `docs/development-ready.md`.
+
 ## Build web
 
 ```bash
