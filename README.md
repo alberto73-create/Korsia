@@ -176,9 +176,9 @@ Speed Guard elabora la posizione localmente sul dispositivo. Non richiede accoun
 
 ## Visionare mappe, controlli e segnalazioni
 
-La schermata **Mappe e download** ora mostra una mappa schematica offline dei controlli demo e una lista delle strade/limiti. Non usa tile esterni e quindi funziona anche offline; in futuro può essere sostituita da mappe vere o map matching offline.
+La schermata **Mappe e download** ora mostra una mappa vera OpenStreetMap quando sei online, più una vista locale dei controlli e un pacchetto GeoJSON scaricabile. Per mappe offline complete vere serviranno pacchetti PMTiles/MBTiles in una fase successiva.
 
-La schermata **Segnalazioni locali** permette di salvare promemoria personali per lavori, controlli fissi, possibili code, pericoli e note. Di default i dati restano solo sul dispositivo; opzionalmente puoi collegare un Google Sheet tramite Apps Script per condividerli, senza creare una rete live di pattuglie o controlli mobili. Guida in `docs/google-sheet-reports.md`.
+La schermata **Segnalazioni locali** permette di salvare promemoria personali per lavori, controlli fissi, possibili code, pericoli e note. Di default i dati restano solo sul dispositivo; opzionalmente puoi collegare un Google Sheet tramite una API Vercel server-side, senza mostrare l'URL del foglio nel codice frontend e senza creare una rete live di pattuglie o controlli mobili. Guida in `docs/google-sheet-reports.md`.
 
 ## Traffico e code offline: cosa è legale e realistico
 

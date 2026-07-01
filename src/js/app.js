@@ -141,9 +141,13 @@ function maps() {
     <main class="screen ${state.screen === 'maps' ? 'active' : ''}">
       <div class="card">
         <h2>Mappe e download</h2>
-        <p class="muted">Puoi visionare i controlli demo salvati offline. La mappa MVP usa una vista schematica più leggibile e non scarica tile esterni.</p>
-        <a class="secondary download-apk" href="/downloads/speed-guard.apk" download>Scarica APK dal sito</a>
+        <p class="muted">Puoi usare una mappa vera OpenStreetMap quando sei online e scaricare il pacchetto demo GeoJSON per consultazione offline.</p>
+        <div class="map-actions">
+          <a class="secondary download-apk" href="/downloads/speed-guard.apk" download>Scarica APK dal sito</a>
+          <a class="secondary download-apk" href="/maps/italy-demo.geojson" download>Scarica area demo GeoJSON</a>
+        </div>
         <p class="muted">Se il file non esiste ancora, carica l'APK generato in <code>public/downloads/speed-guard.apk</code>.</p>
+        ${realMap()}
         ${mapPreview()}
         <div class="list">
           ${['Italia demo', 'Francia', 'Svizzera', 'Austria', 'Europa'].map((name, index) => `
@@ -163,6 +167,26 @@ function maps() {
         </div>
       </div>
     </main>`;
+}
+
+
+function realMap() {
+  const camera = state.next || state.cameras[0];
+
+  if (!state.online || !camera) {
+    return '<div class="card nested"><div class="label">Mappa vera</div><p class="muted">Offline: uso anteprima locale. La mappa OSM richiede internet; i pacchetti offline veri richiedono PMTiles/MBTiles in una fase successiva.</p></div>';
+  }
+
+  const lat = camera.latitude;
+  const lon = camera.longitude;
+  const delta = 0.025;
+  const src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - delta}%2C${lat - delta}%2C${lon + delta}%2C${lat + delta}&layer=mapnik&marker=${lat}%2C${lon}`;
+
+  return `
+    <div class="real-map-wrap">
+      <iframe class="real-map" title="Mappa OpenStreetMap" src="${src}" loading="lazy"></iframe>
+      <p class="muted">Mappa gratuita OpenStreetMap online. Nessuna posizione utente viene inviata da Speed Guard; il riquadro carica tile OSM dal browser.</p>
+    </div>`;
 }
 
 function mapPreview() {
@@ -258,9 +282,8 @@ function settings() {
         ${range('secondDistance', 'Secondo avviso', 250, 1000)}
         ${range('volume', 'Volume voce', 0, 1, 0.1)}
         ${range('overspeedTolerance', 'Soglia rosso oltre limite (km/h)', 1, 15, 1)}
-        <label class="toggle">Condividi segnalazioni su Google Sheet<input type="checkbox" id="shareReports" ${state.settings.shareReports ? 'checked' : ''}></label>
-        <label>URL Web App Google Sheet<input class="text-input" id="googleSheetWebhookUrl" type="url" placeholder="https://script.google.com/.../exec" value="${state.settings.googleSheetWebhookUrl || ''}"></label>
-        <p class="muted">La condivisione è opzionale: serve un tuo Google Apps Script. Senza URL, le segnalazioni restano solo locali.</p>
+        <label class="toggle">Condividi segnalazioni su Google Sheet privato<input type="checkbox" id="shareReports" ${state.settings.shareReports ? 'checked' : ''}></label>
+        <p class="muted">Facile e non visibile a tutti: configura l'URL Google Sheet in Vercel come variabile server <code>GOOGLE_SHEET_WEBHOOK_URL</code>. Nell'app resta solo questo interruttore.</p>
       </div>
     </main>`;
 }
@@ -309,11 +332,6 @@ function bind() {
   if (mode) {
     mode.value = state.settings.alertMode;
     mode.onchange = () => updateSetting('alertMode', mode.value);
-  }
-
-  const sheetUrl = $('#googleSheetWebhookUrl');
-  if (sheetUrl) {
-    sheetUrl.onchange = () => updateSetting('googleSheetWebhookUrl', sheetUrl.value.trim());
   }
 
   document.querySelectorAll('[data-add-report]').forEach((button) => {

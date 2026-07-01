@@ -46,20 +46,24 @@ export function clearReports() {
 }
 
 export async function shareReportToGoogleSheet(report, settings = {}) {
-  if (!settings.shareReports || !settings.googleSheetWebhookUrl) {
+  if (!settings.shareReports) {
     return { skipped: true };
   }
 
-  await fetch(settings.googleSheetWebhookUrl, {
+  const endpoint = settings.reportEndpoint || '/api/report';
+  const response = await fetch(endpoint, {
     method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       app: 'Speed Guard',
       kind: 'local_report',
       report,
     }),
   });
+
+  if (!response.ok) {
+    throw new Error('Endpoint segnalazioni non configurato');
+  }
 
   return { sent: true };
 }

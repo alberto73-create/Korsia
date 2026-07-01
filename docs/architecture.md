@@ -58,3 +58,12 @@ Una funzione di traffico live completamente offline non è tecnicamente realisti
 4. segnalazioni personali non condivise.
 
 Sono escluse dal design MVP segnalazioni live di pattuglie o controlli mobili condivisi tra utenti.
+
+
+## Mappe vere e offline
+
+L'MVP ora usa OpenStreetMap come mappa vera gratuita quando il dispositivo è online. Per consultazione offline viene fornito un pacchetto demo GeoJSON scaricabile. Una mappa offline completa, con strade vere e zoom fluidi, richiede un formato tile offline come PMTiles/MBTiles e una libreria dedicata: è fattibile, ma va gestito come step successivo perché i pacchetti regionali possono diventare pesanti.
+
+## Endpoint privato segnalazioni
+
+La condivisione Google Sheet passa da `/api/report`, una funzione Vercel server-side. L'URL Apps Script resta in `GOOGLE_SHEET_WEBHOOK_URL` e non viene mostrato nell'interfaccia utente.

@@ -1,6 +1,10 @@
-# Segnalazioni condivise con Google Sheet
+# Segnalazioni condivise con Google Sheet privato
 
-Le segnalazioni restano locali per impostazione predefinita. Se vuoi aiutare altri utenti in modo semplice e gratuito puoi collegare un Google Sheet tramite Google Apps Script.
+Le segnalazioni restano locali per impostazione predefinita. Se vuoi aiutare altri utenti in modo semplice, puoi collegare un Google Sheet tramite una API Vercel server-side inclusa nel progetto.
+
+## Perché così è più privato
+
+L'URL del Google Apps Script **non viene scritto nel codice frontend** e non appare nelle impostazioni dell'app. L'app invia a `/api/report`; la funzione server legge `GOOGLE_SHEET_WEBHOOK_URL` dalle variabili ambiente Vercel.
 
 ## Principio legale/privacy
 
@@ -38,9 +42,12 @@ function doPost(e) {
 
 4. Pubblica come **Web app**.
 5. Accesso: **Chiunque abbia il link**.
-6. Copia l'URL `/exec` in Speed Guard > Avvisi > URL Web App Google Sheet.
-7. Abilita **Condividi segnalazioni su Google Sheet**.
+6. Copia l'URL `/exec`.
+7. In Vercel vai su **Project Settings > Environment Variables**.
+8. Aggiungi `GOOGLE_SHEET_WEBHOOK_URL` con l'URL copiato.
+9. Redeploy.
+10. In Speed Guard abilita **Condividi segnalazioni su Google Sheet privato**.
 
 ## Limiti
 
-Con `mode: no-cors` il browser può inviare il dato ma non leggere una risposta dettagliata. Per una versione produzione conviene creare un piccolo backend o un endpoint con CORS configurato, moderazione e protezione anti-spam.
+Questa soluzione è semplice e raggiungibile, ma per produzione servono moderazione, anti-spam e controllo qualità dati. L'endpoint `/api/report` tiene nascosto l'URL del foglio agli utenti dell'app, ma chi può modificare il progetto Vercel può vedere la variabile ambiente.
