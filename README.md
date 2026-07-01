@@ -83,8 +83,9 @@ All'avvio `src/js/database.js` carica il JSON demo, lo salva in IndexedDB e lo r
 
 1. L'app prova a caricare il pacchetto locale demo Italia.
 2. Se IndexedDB contiene già una versione, usa quella per garantire continuità offline.
-3. Se l'utente preme **Aggiorna database**, l'app rilegge il pacchetto demo e aggiorna IndexedDB.
-4. Se il download/lettura fallisce, resta valida l'ultima copia locale funzionante.
+3. Una volta a settimana, se il dispositivo è online, l'app prova un controllo automatico e aggiorna IndexedDB.
+4. Se l'utente preme **Aggiorna ora**, l'app forza l'aggiornamento manuale del pacchetto demo.
+5. Se il download/lettura fallisce, resta valida l'ultima copia locale funzionante.
 
 ### Evoluzione produzione
 
@@ -164,6 +165,18 @@ docs/
 ## Privacy
 
 Speed Guard elabora la posizione localmente sul dispositivo. Non richiede account e non invia la posizione a server esterni. Internet serve solo per aggiornamenti app o pacchetti dati statici.
+
+## Installare APK su Android
+
+1. Generare l'APK con `npm run apk:debug` o una release firmata da Android Studio.
+2. Copiare il file `.apk` sul telefono, oppure scaricarlo dal sito/landing page.
+3. Su Android aprire il file e autorizzare l'installazione da origini sconosciute per il browser/file manager usato.
+4. Installare l'app, aprirla e concedere il permesso posizione.
+5. Per uso reale in moto servirà la versione Capacitor con Foreground Service Android per GPS a schermo spento.
+
+## Visionare mappe e controlli
+
+La schermata **Mappe e download** ora mostra una mappa schematica offline dei controlli demo e una lista delle strade/limiti. Non usa tile esterni e quindi funziona anche offline; in futuro può essere sostituita da mappe vere o map matching offline.
 
 ## Limiti noti dell'MVP
 

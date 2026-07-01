@@ -7,8 +7,10 @@ Questo documento descrive il comportamento attuale dell'MVP e il flusso consigli
 - Pacchetto disponibile: **Italia demo**.
 - File sorgente: `public/data/cameras-it-demo.json`.
 - Persistenza locale: IndexedDB, database `speed-guard-db`, object store `packages`.
-- Aggiornamento manuale: pulsante **Aggiorna database** nella schermata **Mappe e download**.
+- Aggiornamento manuale: pulsante **Aggiorna ora** nella schermata **Mappe e download**.
+- Aggiornamento automatico: controllo massimo settimanale quando l'app è online.
 - Fallback offline: se l'app ha già salvato un pacchetto valido, continua a usare quello anche senza internet.
+- Visualizzazione: mappa schematica offline e lista controlli nella schermata **Mappe e download**.
 
 ## Schema record controllo
 
