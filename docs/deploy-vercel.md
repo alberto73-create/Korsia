@@ -20,9 +20,9 @@ Il file `vercel.json` imposta:
 - framework Vite;
 - comando build `npm run build`;
 - directory output `dist`;
-- header no-cache per `service-worker.js`, così gli aggiornamenti PWA arrivano più rapidamente;
+- header no-cache per `/service-worker.js`, così gli aggiornamenti PWA arrivano più rapidamente;
 - content type corretto per `manifest.json`;
-- cache breve per i dati demo in `src/data/*`;
+- cache breve per i dati demo in `/data/*`;
 - rewrite verso `index.html` per funzionamento SPA/PWA.
 
 ## Deploy da dashboard Vercel

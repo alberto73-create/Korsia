@@ -11,7 +11,7 @@ Speed Guard è una PWA offline-first convertibile in APK Android con Capacitor. 
 - `src/js/settings.js`: preferenze locali per voce, vibrazione, distanze e filtri.
 - `src/js/speech.js`: Text-to-Speech browser/WebView.
 - `src/js/vibration.js`: vibrazione con Vibration API.
-- `service-worker.js`: cache offline degli asset e del database demo.
+- `public/service-worker.js`: cache offline degli asset e del database demo.
 
 ## Logica anti falsi avvisi MVP
 
@@ -34,7 +34,7 @@ La posizione non viene inviata a server esterni. È usata localmente per velocit
 
 ## Aggiornamenti database e gestione mappe
 
-La gestione dati è separata dall'interfaccia e vive in `src/js/database.js`. Nell'MVP il pacchetto Italia demo viene caricato da `src/data/cameras-it-demo.json` e copiato in IndexedDB. Questo permette all'app di riaprire l'ultima versione disponibile anche senza internet.
+La gestione dati è separata dall'interfaccia e vive in `src/js/database.js`. Nell'MVP il pacchetto Italia demo viene caricato da `public/data/cameras-it-demo.json` e copiato in IndexedDB. Questo permette all'app di riaprire l'ultima versione disponibile anche senza internet.
 
 La schermata **Mappe e download** rappresenta le aree scaricabili. Oggi abilita solo Italia demo; Francia, Svizzera, Austria ed Europa sono segnaposto per pacchetti futuri. Il comportamento previsto per la produzione è documentato in `docs/database-updates.md` e prevede:
 

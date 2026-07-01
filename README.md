@@ -60,7 +60,7 @@ La cartella `android/` è predisposta per il progetto Capacitor; dopo `npx cap a
 Nel MVP i dati sono dimostrativi e vivono in:
 
 ```text
-src/data/cameras-it-demo.json
+public/data/cameras-it-demo.json
 ```
 
 Ogni elemento contiene almeno:
@@ -151,9 +151,11 @@ src/
   js/speech.js
   js/vibration.js
   js/offline.js
+public/
   data/cameras-it-demo.json
+  assets/icon.svg
   manifest.json
-service-worker.js
+  service-worker.js
 capacitor.config.json
 android/
 docs/

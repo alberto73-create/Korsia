@@ -44,7 +44,7 @@ APK atteso: `android/app/build/outputs/apk/debug/app-debug.apk`.
 
 ## 6. Aggiornare database demo
 
-Il database demo è in `src/data/cameras-it-demo.json`. Per modificarlo, aggiornare i record e incrementare `lastUpdated`. Ogni record deve avere `id`, coordinate, `roadName`, `direction`, `speedLimit`, `country`, `source` e `lastUpdated`. Poi eseguire:
+Il database demo è in `public/data/cameras-it-demo.json`. Per modificarlo, aggiornare i record e incrementare `lastUpdated`. Ogni record deve avere `id`, coordinate, `roadName`, `direction`, `speedLimit`, `country`, `source` e `lastUpdated`. Poi eseguire:
 
 ```bash
 npm run build
