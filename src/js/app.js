@@ -9,7 +9,7 @@ import {
 import { loadSettings, saveSettings } from './settings.js';
 import { AlertEngine, findRelevantCamera, formatDistance } from './alerts.js';
 import { onNetworkChange, registerServiceWorker } from './offline.js';
-import { addReport, clearReports, loadReports, removeReport, reportTypes } from './reports.js';
+import { addReport, clearReports, loadReports, removeReport, reportTypes, shareReportToGoogleSheet } from './reports.js';
 
 const state = {
   screen: 'dashboard',
@@ -36,9 +36,10 @@ function render() {
   document.getElementById('app').innerHTML = `
     <div class="app">
       <header class="topbar">
-        <div class="brand">
-          <h1>Speed Guard</h1>
-          <p>Assistente offline per velocità e guida sicura.</p>
+        <div class="brand brand-row">
+          <img class="brand-logo" src="/assets/icon.svg" alt="Speed Guard logo"/>
+          <div><h1>Speed Guard</h1>
+          <p>Assistente offline per velocità e guida sicura.</p></div>
         </div>
         <div class="pill">${state.online ? 'Online' : 'Offline attivo'}</div>
       </header>
@@ -68,18 +69,37 @@ function tab(id, label) {
   return `<button class="tab ${state.screen === id ? 'active' : ''}" data-screen="${id}">${label}</button>`;
 }
 
+
+function speedStatusClass() {
+  const currentLimit = Number(limit());
+
+  if (!currentLimit) return 'speed-ok';
+  if (kmh() > currentLimit + state.settings.overspeedTolerance) return 'speed-danger';
+  if (kmh() >= currentLimit - 5) return 'speed-warning';
+  return 'speed-ok';
+}
+
+function limitBadge() {
+  return `<div class="limit-badge ${speedStatusClass()}" aria-label="Limite ${limit()} chilometri orari"><span>${limit()}</span></div>`;
+}
+
+function quickReportButtons() {
+  return reportTypes.slice(0, 4).map((type) => `<button class="secondary compact" data-quick-report="${type.id}">${type.label}</button>`).join('');
+}
+
 function dashboard() {
   return `
     <main class="screen ${state.screen === 'dashboard' ? 'active' : ''}">
       <section class="grid">
-        <div class="card speed-card">
+        <div class="card speed-card ${speedStatusClass()}">
           <div class="label">Velocità GPS</div>
+          ${limitBadge()}
           <div class="speed">${kmh()}</div>
           <div class="unit">km/h</div>
         </div>
         <div class="card">
           <div class="label">Limite attuale</div>
-          <div class="limit">${limit()}</div>
+          <div class="limit limit-sign ${speedStatusClass()}">${limit()}</div>
         </div>
         <div class="card">
           <div class="label">Database</div>
@@ -101,7 +121,8 @@ function moto() {
     <main class="screen moto ${state.screen === 'moto' ? 'active' : ''}">
       <div class="card">
         <div class="label">Modalità moto</div>
-        <div class="speed">${kmh()}</div>
+        ${limitBadge()}
+        <div class="speed ${speedStatusClass()}">${kmh()}</div>
         <div class="unit">km/h</div>
         <h2>Prossimo controllo: ${state.next ? formatDistance(state.next.distance) : '—'}</h2>
         <div class="status-row">
@@ -109,6 +130,7 @@ function moto() {
           <span class="pill">${state.settings.voice ? 'Avvisi vocali attivi' : 'Voce off'}</span>
           <span class="pill">${state.moto ? 'Background attivo*' : 'In pausa'}</span>
         </div>
+        <div class="quick-report"><h3>Segnala rapido</h3>${quickReportButtons()}</div>
         <p class="muted">* In APK Android Capacitor: usare Foreground Service per GPS persistente a schermo spento.</p>
       </div>
     </main>`;
@@ -119,7 +141,9 @@ function maps() {
     <main class="screen ${state.screen === 'maps' ? 'active' : ''}">
       <div class="card">
         <h2>Mappe e download</h2>
-        <p class="muted">Puoi visionare i controlli demo salvati offline. La mappa MVP è schematica e non scarica tile esterni.</p>
+        <p class="muted">Puoi visionare i controlli demo salvati offline. La mappa MVP usa una vista schematica più leggibile e non scarica tile esterni.</p>
+        <a class="secondary download-apk" href="/downloads/speed-guard.apk" download>Scarica APK dal sito</a>
+        <p class="muted">Se il file non esiste ancora, carica l'APK generato in <code>public/downloads/speed-guard.apk</code>.</p>
         ${mapPreview()}
         <div class="list">
           ${['Italia demo', 'Francia', 'Svizzera', 'Austria', 'Europa'].map((name, index) => `
@@ -165,6 +189,9 @@ function mapPreview() {
   return `
     <div class="mini-map" aria-label="Mappa schematica controlli demo">
       <div class="map-grid"></div>
+      <div class="map-road map-road-a"></div>
+      <div class="map-road map-road-b"></div>
+      <div class="map-road map-road-c"></div>
       ${points}
     </div>
     <div class="camera-list">
@@ -182,7 +209,7 @@ function reports() {
     <main class="screen ${state.screen === 'reports' ? 'active' : ''}">
       <div class="card">
         <h2>Segnalazioni locali</h2>
-        <p class="muted">Le segnalazioni sono promemoria salvati solo sul tuo dispositivo. Non vengono condivise e non creano una rete live di pattuglie o controlli mobili.</p>
+        <p class="muted">Le segnalazioni nascono come promemoria locali. Se abiliti Google Sheet nelle impostazioni, puoi condividerle su un tuo foglio; non viene creata una rete live di pattuglie o controlli mobili.</p>
         <div class="report-actions">
           ${reportTypes.map((type) => `<button class="secondary" data-add-report="${type.id}">${type.label}</button>`).join('')}
         </div>
@@ -230,6 +257,10 @@ function settings() {
         ${range('firstDistance', 'Primo avviso', 500, 2000)}
         ${range('secondDistance', 'Secondo avviso', 250, 1000)}
         ${range('volume', 'Volume voce', 0, 1, 0.1)}
+        ${range('overspeedTolerance', 'Soglia rosso oltre limite (km/h)', 1, 15, 1)}
+        <label class="toggle">Condividi segnalazioni su Google Sheet<input type="checkbox" id="shareReports" ${state.settings.shareReports ? 'checked' : ''}></label>
+        <label>URL Web App Google Sheet<input class="text-input" id="googleSheetWebhookUrl" type="url" placeholder="https://script.google.com/.../exec" value="${state.settings.googleSheetWebhookUrl || ''}"></label>
+        <p class="muted">La condivisione è opzionale: serve un tuo Google Apps Script. Senza URL, le segnalazioni restano solo locali.</p>
       </div>
     </main>`;
 }
@@ -264,12 +295,12 @@ function bind() {
 
   $('#toggleMoto').onclick = toggleMoto;
 
-  ['voice', 'vibration'].forEach((key) => {
+  ['voice', 'vibration', 'shareReports'].forEach((key) => {
     const input = $(`#${key}`);
     if (input) input.onchange = () => updateSetting(key, input.checked);
   });
 
-  ['firstDistance', 'secondDistance', 'volume'].forEach((key) => {
+  ['firstDistance', 'secondDistance', 'volume', 'overspeedTolerance'].forEach((key) => {
     const input = $(`#${key}`);
     if (input) input.oninput = () => updateSetting(key, Number(input.value));
   });
@@ -280,11 +311,22 @@ function bind() {
     mode.onchange = () => updateSetting('alertMode', mode.value);
   }
 
+  const sheetUrl = $('#googleSheetWebhookUrl');
+  if (sheetUrl) {
+    sheetUrl.onchange = () => updateSetting('googleSheetWebhookUrl', sheetUrl.value.trim());
+  }
+
   document.querySelectorAll('[data-add-report]').forEach((button) => {
-    button.onclick = () => {
-      addReport(button.dataset.addReport, state.pos);
-      state.reports = loadReports();
-      render();
+    button.onclick = async () => saveLocalReport(button.dataset.addReport);
+  });
+
+  document.querySelectorAll('[data-quick-report]').forEach((button) => {
+    button.onclick = async () => {
+      const type = reportTypes.find((item) => item.id === button.dataset.quickReport);
+      if (confirm(`Confermi segnalazione: ${type?.label || 'Segnalazione'}?`)) {
+        await saveLocalReport(button.dataset.quickReport);
+        alert('Segnalazione salvata.');
+      }
     };
   });
 
@@ -325,6 +367,20 @@ function bind() {
       render();
     };
   });
+}
+
+
+async function saveLocalReport(type) {
+  const report = addReport(type, state.pos);
+  state.reports = loadReports();
+
+  try {
+    await shareReportToGoogleSheet(report, state.settings);
+  } catch (error) {
+    console.warn('Condivisione Google Sheet non riuscita', error);
+  }
+
+  render();
 }
 
 function updateSetting(key, value) {

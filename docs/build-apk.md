@@ -44,7 +44,7 @@ APK atteso: `android/app/build/outputs/apk/debug/app-debug.apk`.
 
 ## 5.1 Installare APK su Android
 
-1. Trasferire l'APK sul telefono via USB, cloud o download dal sito.
+1. Trasferire l'APK sul telefono via USB, cloud o download dal sito. Per abilitarlo dal sito, copiare l'APK in `public/downloads/speed-guard.apk` e redeployare.
 2. Toccare il file `.apk`.
 3. Se Android lo richiede, abilitare **Installa app sconosciute** per il browser o file manager usato.
 4. Completare l'installazione.

@@ -44,3 +44,22 @@ export function removeReport(id) {
 export function clearReports() {
   return saveReports([]);
 }
+
+export async function shareReportToGoogleSheet(report, settings = {}) {
+  if (!settings.shareReports || !settings.googleSheetWebhookUrl) {
+    return { skipped: true };
+  }
+
+  await fetch(settings.googleSheetWebhookUrl, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({
+      app: 'Speed Guard',
+      kind: 'local_report',
+      report,
+    }),
+  });
+
+  return { sent: true };
+}

@@ -169,7 +169,7 @@ Speed Guard elabora la posizione localmente sul dispositivo. Non richiede accoun
 ## Installare APK su Android
 
 1. Generare l'APK con `npm run apk:debug` o una release firmata da Android Studio.
-2. Copiare il file `.apk` sul telefono, oppure scaricarlo dal sito/landing page.
+2. Copiare il file `.apk` sul telefono, oppure caricarlo in `public/downloads/speed-guard.apk` per farlo scaricare direttamente dal sito.
 3. Su Android aprire il file e autorizzare l'installazione da origini sconosciute per il browser/file manager usato.
 4. Installare l'app, aprirla e concedere il permesso posizione.
 5. Per uso reale in moto servirà la versione Capacitor con Foreground Service Android per GPS a schermo spento.
@@ -178,7 +178,7 @@ Speed Guard elabora la posizione localmente sul dispositivo. Non richiede accoun
 
 La schermata **Mappe e download** ora mostra una mappa schematica offline dei controlli demo e una lista delle strade/limiti. Non usa tile esterni e quindi funziona anche offline; in futuro può essere sostituita da mappe vere o map matching offline.
 
-La schermata **Segnalazioni locali** permette di salvare promemoria personali per lavori, controlli fissi, possibili code, pericoli e note. I dati restano solo sul dispositivo: non sono segnalazioni live, non vengono condivisi e non includono una rete di controlli mobili/pattuglie.
+La schermata **Segnalazioni locali** permette di salvare promemoria personali per lavori, controlli fissi, possibili code, pericoli e note. Di default i dati restano solo sul dispositivo; opzionalmente puoi collegare un Google Sheet tramite Apps Script per condividerli, senza creare una rete live di pattuglie o controlli mobili. Guida in `docs/google-sheet-reports.md`.
 
 ## Traffico e code offline: cosa è legale e realistico
 
