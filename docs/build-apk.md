@@ -44,14 +44,14 @@ APK atteso: `android/app/build/outputs/apk/debug/app-debug.apk`.
 
 ## 6. Aggiornare database demo
 
-Modificare `src/data/cameras-it-demo.json`, incrementando `lastUpdated` e gli elementi. Poi eseguire:
+Il database demo è in `src/data/cameras-it-demo.json`. Per modificarlo, aggiornare i record e incrementare `lastUpdated`. Ogni record deve avere `id`, coordinate, `roadName`, `direction`, `speedLimit`, `country`, `source` e `lastUpdated`. Poi eseguire:
 
 ```bash
 npm run build
 npx cap sync android
 ```
 
-Nell'app, la schermata **Mappe e download** permette di ricaricare il pacchetto demo in IndexedDB.
+Nell'app, la schermata **Mappe e download** permette di ricaricare il pacchetto demo in IndexedDB. Il flusso produzione previsto è descritto in `docs/database-updates.md`: manifest pacchetti, download area, validazione checksum, salvataggio atomico e mantenimento dell'ultima copia valida in caso di errore.
 
 ## 7. Mancante per versione finale
 

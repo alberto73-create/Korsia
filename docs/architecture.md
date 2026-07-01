@@ -31,3 +31,16 @@ La PWA da sola non garantisce GPS continuo a schermo spento. La versione APK dev
 ## Privacy
 
 La posizione non viene inviata a server esterni. È usata localmente per velocità, prossimità e avvisi. Gli aggiornamenti database devono scaricare pacchetti statici anonimi e mantenere l'ultima copia valida in IndexedDB.
+
+## Aggiornamenti database e gestione mappe
+
+La gestione dati è separata dall'interfaccia e vive in `src/js/database.js`. Nell'MVP il pacchetto Italia demo viene caricato da `src/data/cameras-it-demo.json` e copiato in IndexedDB. Questo permette all'app di riaprire l'ultima versione disponibile anche senza internet.
+
+La schermata **Mappe e download** rappresenta le aree scaricabili. Oggi abilita solo Italia demo; Francia, Svizzera, Austria ed Europa sono segnaposto per pacchetti futuri. Il comportamento previsto per la produzione è documentato in `docs/database-updates.md` e prevede:
+
+1. manifest remoto leggero con elenco pacchetti e checksum;
+2. download solo dell'area scelta o già installata;
+3. validazione schema/checksum;
+4. salvataggio atomico in IndexedDB;
+5. mantenimento dell'ultima versione valida se l'aggiornamento fallisce;
+6. controllo automatico massimo settimanale quando l'app è online e non è in modalità moto.
