@@ -4,7 +4,7 @@ Speed Guard è una PWA offline-first convertibile in APK Android con Capacitor. 
 
 ## Moduli
 
-- `src/js/app.js`: stato applicazione, rendering schermate, avvio/stop modalità moto.
+- `src/js/app.js`: stato applicazione, rendering schermate, avvio/stop modalità guida.
 - `src/js/gps.js`: wrapper GPS reale via Geolocation API e fallback demo per ambienti senza sensore.
 - `src/js/alerts.js`: selezione del controllo compatibile e soglie avvisi.
 - `src/js/database.js`: persistenza IndexedDB e caricamento pacchetto demo Italia.
@@ -38,12 +38,12 @@ La gestione dati è separata dall'interfaccia e vive in `src/js/database.js`. Ne
 
 La schermata **Mappe e download** rappresenta le aree scaricabili. Oggi abilita solo Italia demo; Francia, Svizzera, Austria ed Europa sono segnaposto per pacchetti futuri. Il comportamento previsto per la produzione è documentato in `docs/database-updates.md` e prevede:
 
-1. manifest remoto leggero con elenco pacchetti e checksum;
+1. manifest reguida leggero con elenco pacchetti e checksum;
 2. download solo dell'area scelta o già installata;
 3. validazione schema/checksum;
 4. salvataggio atomico in IndexedDB;
 5. mantenimento dell'ultima versione valida se l'aggiornamento fallisce;
-6. controllo automatico massimo settimanale quando l'app è online e non è in modalità moto.
+6. controllo automatico massimo settimanale quando l'app è online e non è in modalità guida.
 
 
 ## Segnalazioni e traffico offline
@@ -62,7 +62,7 @@ Sono escluse dal design MVP segnalazioni live di pattuglie o controlli mobili co
 
 ## Mappe vere e offline
 
-L'MVP ora usa OpenStreetMap come mappa vera gratuita quando il dispositivo è online. Per consultazione offline viene fornito un pacchetto demo GeoJSON scaricabile. Una mappa offline completa, con strade vere e zoom fluidi, richiede un formato tile offline come PMTiles/MBTiles e una libreria dedicata: è fattibile, ma va gestito come step successivo perché i pacchetti regionali possono diventare pesanti.
+L'MVP ora usa una sola vista mappa: OpenStreetMap quando il dispositivo è online e una mappa locale basata sul pacchetto scaricato quando è offline. Il download delle aree resta nella lista Stati/aree. Una mappa offline completa, con tutte le strade vere e zoom fluidi, richiede un formato tile offline come PMTiles/MBTiles e una libreria dedicata: è fattibile, ma va gestito come step successivo perché i pacchetti regionali possono diventare pesanti.
 
 ## Endpoint privato segnalazioni
 
@@ -71,6 +71,6 @@ La condivisione Google Sheet passa da `/api/report`, una funzione Vercel server-
 
 ## Risparmio batteria e schermo
 
-Nel web/PWA l'app non può spegnere lo schermo dello smartphone né modificare la luminosità di sistema per motivi di sicurezza del browser. L'MVP implementa quindi un risparmio UI: in modalità moto oscura l'interfaccia e la riattiva quando un evento è entro `wakeDistance` metri, default 2000 m.
+Nel web/PWA l'app non può spegnere lo schermo dello smartphone né modificare la luminosità di sistema per motivi di sicurezza del browser. L'MVP implementa quindi un risparmio UI: in modalità guida oscura l'interfaccia e la riattiva quando un evento è entro `wakeDistance` metri, default 2000 m.
 
 Per Android nativo la versione Capacitor dovrà aggiungere un plugin/Foreground Service che possa gestire wake lock, luminosità finestra e notifica persistente rispettando le policy Android.

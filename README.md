@@ -1,13 +1,13 @@
 # Speed Guard
 
-**Speed Guard** è un MVP di web app/PWA offline-first pensata per motociclisti e automobilisti. L'obiettivo è offrire un assistente leggero per velocità, limiti e avvisi preventivi su controlli fissi mappati, senza diventare un navigatore completo.
+**Speed Guard** è un MVP di web app/PWA offline-first pensata per guidaciclisti e automobilisti. L'obiettivo è offrire un assistente leggero per velocità, limiti e avvisi preventivi su controlli fissi mappati, senza diventare un navigatore completo.
 
 > Posizionamento del prodotto: **assistente alla guida e al rispetto dei limiti**, non app per eludere controlli.
 
 ## Funzionalità incluse nell'MVP
 
 - Dashboard ad alto contrasto con velocità GPS, limite stimato, stato online/offline e prossimo controllo compatibile.
-- Modalità moto con UI minimale, caratteri molto grandi, vibrazione e avvisi vocali.
+- Modalità guida con UI minimale, caratteri molto grandi, vibrazione e avvisi vocali.
 - Database demo Italia salvato localmente in IndexedDB.
 - Funzionamento offline tramite Service Worker e cache degli asset principali.
 - Logica base per ridurre falsi avvisi usando distanza, direzione di marcia, bearing e direzione del controllo.
@@ -172,11 +172,11 @@ Speed Guard elabora la posizione localmente sul dispositivo. Non richiede accoun
 2. Copiare il file `.apk` sul telefono, oppure caricarlo in `public/downloads/speed-guard.apk` per farlo scaricare direttamente dal sito.
 3. Su Android aprire il file e autorizzare l'installazione da origini sconosciute per il browser/file manager usato.
 4. Installare l'app, aprirla e concedere il permesso posizione.
-5. Per uso reale in moto servirà la versione Capacitor con Foreground Service Android per GPS a schermo spento.
+5. Per uso reale in guida servirà la versione Capacitor con Foreground Service Android per GPS a schermo spento.
 
 ## Visionare mappe, controlli e segnalazioni
 
-La schermata **Mappe e download** ora mostra una mappa vera OpenStreetMap quando sei online, una mappa locale visibile senza rete basata sui dati scaricati e un pacchetto GeoJSON scaricabile. Per mappe offline complete con tutte le strade vere serviranno pacchetti PMTiles/MBTiles in una fase successiva.
+La schermata **Mappe e download** ora mostra una sola vista mappa: OpenStreetMap quando online e la mappa locale scaricata quando offline. Il download delle aree resta nella lista Stati/aree sotto, così non ci sono riquadri duplicati.
 
 La schermata **Segnalazioni locali** permette di salvare promemoria personali per lavori, controlli fissi, possibili code, pericoli e note. Di default i dati restano solo sul dispositivo; opzionalmente puoi collegare un Google Sheet tramite una API Vercel server-side, senza mostrare l'URL del foglio nel codice frontend e senza creare una rete live di pattuglie o controlli mobili. Guida in `docs/google-sheet-reports.md`.
 
@@ -186,7 +186,7 @@ Una vera analisi traffico live non può funzionare completamente offline senza d
 
 ## Risparmio batteria
 
-La modalità moto include un risparmio batteria UI: quando non ci sono eventi entro la distanza configurata, l'interfaccia viene oscurata; torna luminosa quando un evento entra nel raggio, di default 2 km. Una PWA non può spegnere fisicamente lo schermo o cambiare la luminosità di sistema: per farlo davvero su Android serve un plugin Capacitor/native Foreground Service.
+La modalità guida include un risparmio batteria UI: quando non ci sono eventi entro la distanza configurata, l'interfaccia viene oscurata; torna luminosa quando un evento entra nel raggio, di default 2 km. Una PWA non può spegnere fisicamente lo schermo o cambiare la luminosità di sistema: per farlo davvero su Android serve un plugin Capacitor/native Foreground Service.
 
 ## Limiti noti dell'MVP
 

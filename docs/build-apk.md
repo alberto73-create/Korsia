@@ -19,7 +19,7 @@ Aprire l'indirizzo mostrato da Vite. Il GPS reale richiede HTTPS o `localhost`; 
 ## 3. Testare GPS e avvisi
 
 1. Aprire la Dashboard.
-2. Premere **Avvia modalità moto**.
+2. Premere **Avvia modalità guida**.
 3. Concedere permesso posizione.
 4. Se il browser non espone il GPS, `gps.js` usa un percorso demo vicino al controllo `SS 42`.
 5. Verificare distanza prossimo controllo, voce e vibrazione.

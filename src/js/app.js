@@ -45,7 +45,7 @@ function render() {
       </header>
       <nav class="tabs">
         ${tab('dashboard', 'Dashboard')}
-        ${tab('moto', 'Modalità moto')}
+        ${tab('moto', 'Modalità guida')}
         ${tab('maps', 'Mappe')}
         ${tab('reports', 'Segnalazioni')}
         ${tab('settings', 'Avvisi')}
@@ -58,7 +58,7 @@ function render() {
       ${settings()}
       ${privacy()}
       <div class="footer-actions">
-        <button class="primary" id="toggleMoto">${state.moto ? 'Ferma modalità moto' : 'Avvia modalità moto'}</button>
+        <button class="primary" id="toggleMoto">${state.moto ? 'Ferma modalità guida' : 'Avvia modalità guida'}</button>
       </div>
     </div>`;
 
@@ -135,7 +135,7 @@ function moto() {
   return `
     <main class="screen moto ${state.screen === 'moto' ? 'active' : ''}">
       <div class="card">
-        <div class="label">Modalità moto</div>
+        <div class="label">Modalità guida</div>
         ${limitBadge()}
         <div class="speed ${speedStatusClass()}">${kmh()}</div>
         <div class="unit">km/h</div>
@@ -157,15 +157,10 @@ function maps() {
     <main class="screen ${state.screen === 'maps' ? 'active' : ''}">
       <div class="card">
         <h2>Mappe e download</h2>
-        <p class="muted">Puoi usare una mappa vera OpenStreetMap quando sei online e scaricare il pacchetto demo GeoJSON per consultazione offline.</p>
-        <div class="map-actions">
-          <a class="secondary download-apk" href="/downloads/speed-guard.apk" download>Scarica APK dal sito</a>
-          <a class="secondary download-apk" href="/maps/italy-demo.geojson" download>Scarica area demo GeoJSON</a>
-        </div>
+        <p class="muted">Una sola vista mappa: online usa OpenStreetMap, offline usa il pacchetto locale già scaricato. Il download mappe resta nella lista aree sotto.</p>
+        <a class="secondary download-apk" href="/downloads/speed-guard.apk" download>Scarica APK dal sito</a>
         <p class="muted">Se il file non esiste ancora, carica l'APK generato in <code>public/downloads/speed-guard.apk</code>.</p>
-        ${realMap()}
-        ${offlineMap()}
-        ${mapPreview()}
+        ${mapDisplay()}
         <div class="list">
           ${['Italia demo', 'Francia', 'Svizzera', 'Austria', 'Europa'].map((name, index) => `
             <div class="download">
@@ -186,6 +181,11 @@ function maps() {
     </main>`;
 }
 
+
+
+function mapDisplay() {
+  return state.online ? realMap() : offlineMap();
+}
 
 function realMap() {
   const camera = state.next || state.cameras[0];
@@ -336,7 +336,7 @@ function settings() {
         ${range('secondDistance', 'Secondo avviso', 250, 1000)}
         ${range('volume', 'Volume voce', 0, 1, 0.1)}
         ${range('overspeedTolerance', 'Soglia rosso oltre limite (km/h)', 1, 15, 1)}
-        <label class="toggle">Risparmio batteria moto<input type="checkbox" id="batterySaver" ${state.settings.batterySaver ? 'checked' : ''}></label>
+        <label class="toggle">Risparmio batteria guida<input type="checkbox" id="batterySaver" ${state.settings.batterySaver ? 'checked' : ''}></label>
         ${range('wakeDistance', 'Riattiva schermo/UI prima evento (m)', 500, 5000, 250)}
         <label class="toggle">Condividi segnalazioni su Google Sheet privato<input type="checkbox" id="shareReports" ${state.settings.shareReports ? 'checked' : ''}></label>
         <p class="muted">Facile e non visibile a tutti: configura l'URL Google Sheet in Vercel come variabile server <code>GOOGLE_SHEET_WEBHOOK_URL</code>. Nell'app resta solo questo interruttore.</p>
