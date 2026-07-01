@@ -174,9 +174,15 @@ Speed Guard elabora la posizione localmente sul dispositivo. Non richiede accoun
 4. Installare l'app, aprirla e concedere il permesso posizione.
 5. Per uso reale in moto servirà la versione Capacitor con Foreground Service Android per GPS a schermo spento.
 
-## Visionare mappe e controlli
+## Visionare mappe, controlli e segnalazioni
 
 La schermata **Mappe e download** ora mostra una mappa schematica offline dei controlli demo e una lista delle strade/limiti. Non usa tile esterni e quindi funziona anche offline; in futuro può essere sostituita da mappe vere o map matching offline.
+
+La schermata **Segnalazioni locali** permette di salvare promemoria personali per lavori, controlli fissi, possibili code, pericoli e note. I dati restano solo sul dispositivo: non sono segnalazioni live, non vengono condivisi e non includono una rete di controlli mobili/pattuglie.
+
+## Traffico e code offline: cosa è legale e realistico
+
+Una vera analisi traffico live non può funzionare completamente offline senza dati aggiornati esterni. Per restare gratuita, privacy-first e legale al 100%, l'MVP supporta solo promemoria locali e in futuro potrà usare dati ufficiali/open data scaricabili, statistiche storiche anonime o rilevamento locale di rallentamento basato sul GPS del dispositivo. Non verranno inviate posizioni utente né create segnalazioni live di pattuglie o controlli mobili.
 
 ## Limiti noti dell'MVP
 

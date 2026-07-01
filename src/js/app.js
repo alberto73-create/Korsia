@@ -9,6 +9,7 @@ import {
 import { loadSettings, saveSettings } from './settings.js';
 import { AlertEngine, findRelevantCamera, formatDistance } from './alerts.js';
 import { onNetworkChange, registerServiceWorker } from './offline.js';
+import { addReport, clearReports, loadReports, removeReport, reportTypes } from './reports.js';
 
 const state = {
   screen: 'dashboard',
@@ -21,6 +22,7 @@ const state = {
   updateStatus: 'Pronto',
   settings: loadSettings(),
   next: null,
+  reports: loadReports(),
 };
 
 const gps = new GPSService();
@@ -44,12 +46,14 @@ function render() {
         ${tab('dashboard', 'Dashboard')}
         ${tab('moto', 'Modalità moto')}
         ${tab('maps', 'Mappe')}
+        ${tab('reports', 'Segnalazioni')}
         ${tab('settings', 'Avvisi')}
         ${tab('privacy', 'Privacy')}
       </nav>
       ${dashboard()}
       ${moto()}
       ${maps()}
+      ${reports()}
       ${settings()}
       ${privacy()}
       <div class="footer-actions">
@@ -172,11 +176,47 @@ function mapPreview() {
     </div>`;
 }
 
+
+function reports() {
+  return `
+    <main class="screen ${state.screen === 'reports' ? 'active' : ''}">
+      <div class="card">
+        <h2>Segnalazioni locali</h2>
+        <p class="muted">Le segnalazioni sono promemoria salvati solo sul tuo dispositivo. Non vengono condivise e non creano una rete live di pattuglie o controlli mobili.</p>
+        <div class="report-actions">
+          ${reportTypes.map((type) => `<button class="secondary" data-add-report="${type.id}">${type.label}</button>`).join('')}
+        </div>
+        <p class="muted">Nota legale: i controlli temporanei/mobili live non sono implementati. Usa questa sezione per sicurezza, lavori, code, pericoli e promemoria personali.</p>
+        <div class="list">
+          ${state.reports.length ? state.reports.map((report) => `
+            <div class="download">
+              <div>
+                <b>${report.label}</b>
+                <div class="muted">${formatReportPosition(report)} · ${new Date(report.createdAt).toLocaleString('it-IT')}</div>
+              </div>
+              <button class="secondary compact" data-remove-report="${report.id}">Elimina</button>
+            </div>`).join('') : '<div class="muted">Nessuna segnalazione locale salvata.</div>'}
+        </div>
+        ${state.reports.length ? '<button class="secondary" id="clearReports">Cancella tutte</button>' : ''}
+      </div>
+    </main>`;
+}
+
+function formatReportPosition(report) {
+  if (!report.latitude || !report.longitude) {
+    return 'Posizione non disponibile';
+  }
+
+  return `${report.latitude.toFixed(5)}, ${report.longitude.toFixed(5)}`;
+}
+
 function settings() {
   return `
     <main class="screen ${state.screen === 'settings' ? 'active' : ''}">
       <div class="card">
         <h2>Impostazioni avvisi</h2>
+        <p class="muted">Gli avvisi possono essere vocali, con vibrazione, combinati oppure completamente disattivati.</p>
+        <button class="secondary" id="disableAlerts">Disattiva tutti gli avvisi</button>
         ${check('voice', 'Avvisi vocali')}
         ${check('vibration', 'Vibrazione')}
         <label class="toggle">Modalità
@@ -238,6 +278,34 @@ function bind() {
   if (mode) {
     mode.value = state.settings.alertMode;
     mode.onchange = () => updateSetting('alertMode', mode.value);
+  }
+
+  document.querySelectorAll('[data-add-report]').forEach((button) => {
+    button.onclick = () => {
+      addReport(button.dataset.addReport, state.pos);
+      state.reports = loadReports();
+      render();
+    };
+  });
+
+  document.querySelectorAll('[data-remove-report]').forEach((button) => {
+    button.onclick = () => {
+      state.reports = removeReport(button.dataset.removeReport);
+      render();
+    };
+  });
+
+  const clearReportsButton = $('#clearReports');
+  if (clearReportsButton) {
+    clearReportsButton.onclick = () => {
+      state.reports = clearReports();
+      render();
+    };
+  }
+
+  const disableAlertsButton = $('#disableAlerts');
+  if (disableAlertsButton) {
+    disableAlertsButton.onclick = () => updateSetting('alertMode', 'off');
   }
 
   document.querySelectorAll('[data-update-db]').forEach((button) => {

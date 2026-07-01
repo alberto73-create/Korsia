@@ -44,3 +44,17 @@ La schermata **Mappe e download** rappresenta le aree scaricabili. Oggi abilita 
 4. salvataggio atomico in IndexedDB;
 5. mantenimento dell'ultima versione valida se l'aggiornamento fallisce;
 6. controllo automatico massimo settimanale quando l'app è online e non è in modalità moto.
+
+
+## Segnalazioni e traffico offline
+
+Le segnalazioni dell'MVP sono locali e privacy-first: vengono salvate nel browser/WebView con `localStorage` e non sono inviate a server esterni. Le categorie supportate sono lavori stradali, controllo fisso, possibile coda, pericolo strada e altro promemoria.
+
+Una funzione di traffico live completamente offline non è tecnicamente realistica: le code cambiano in tempo reale e richiedono dati aggiornati. Per una versione gratuita e legale si possono valutare solo:
+
+1. open data ufficiali scaricabili;
+2. dati storici/statici per zone critiche;
+3. rilevamento locale di rallentamento usando solo la velocità GPS del dispositivo;
+4. segnalazioni personali non condivise.
+
+Sono escluse dal design MVP segnalazioni live di pattuglie o controlli mobili condivisi tra utenti.
