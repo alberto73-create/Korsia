@@ -1,0 +1,9 @@
+{
+  "type": "FeatureCollection",
+  "name": "Speed Guard Italia demo",
+  "features": [
+    {"type":"Feature","properties":{"id":"it-demo-ss42-001","type":"speed_camera","roadName":"SS 42","speedLimit":90,"direction":35},"geometry":{"type":"Point","coordinates":[10.22856,45.70422]}},
+    {"type":"Feature","properties":{"id":"it-demo-aurelia-001","type":"speed_camera","roadName":"Viale Amendola","speedLimit":50,"direction":310},"geometry":{"type":"Point","coordinates":[11.25597,43.76873]}},
+    {"type":"Feature","properties":{"id":"it-demo-ring-001","type":"speed_camera","roadName":"Area urbana demo","speedLimit":50,"direction":90},"geometry":{"type":"Point","coordinates":[12.49636,41.90278]}}
+  ]
+}

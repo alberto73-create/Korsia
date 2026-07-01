@@ -19,7 +19,7 @@ Aprire l'indirizzo mostrato da Vite. Il GPS reale richiede HTTPS o `localhost`; 
 ## 3. Testare GPS e avvisi
 
 1. Aprire la Dashboard.
-2. Premere **Avvia modalità moto**.
+2. Premere **Avvia modalità guida**.
 3. Concedere permesso posizione.
 4. Se il browser non espone il GPS, `gps.js` usa un percorso demo vicino al controllo `SS 42`.
 5. Verificare distanza prossimo controllo, voce e vibrazione.
@@ -42,9 +42,18 @@ npm run apk:debug
 
 APK atteso: `android/app/build/outputs/apk/debug/app-debug.apk`.
 
+## 5.1 Installare APK su Android
+
+1. Trasferire l'APK sul telefono via USB, cloud o download dal sito. Per abilitarlo dal sito, copiare l'APK in `public/downloads/speed-guard.apk` e redeployare.
+2. Toccare il file `.apk`.
+3. Se Android lo richiede, abilitare **Installa app sconosciute** per il browser o file manager usato.
+4. Completare l'installazione.
+5. Aprire Speed Guard e concedere il permesso posizione.
+6. Per test a schermo spento usare una build Capacitor con Foreground Service nativo: una PWA semplice può essere sospesa da Android.
+
 ## 6. Aggiornare database demo
 
-Il database demo è in `src/data/cameras-it-demo.json`. Per modificarlo, aggiornare i record e incrementare `lastUpdated`. Ogni record deve avere `id`, coordinate, `roadName`, `direction`, `speedLimit`, `country`, `source` e `lastUpdated`. Poi eseguire:
+Il database demo è in `public/data/cameras-it-demo.json`. Per modificarlo, aggiornare i record e incrementare `lastUpdated`. Ogni record deve avere `id`, coordinate, `roadName`, `direction`, `speedLimit`, `country`, `source` e `lastUpdated`. Poi eseguire:
 
 ```bash
 npm run build

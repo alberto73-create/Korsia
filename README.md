@@ -1,13 +1,13 @@
 # Speed Guard
 
-**Speed Guard** è un MVP di web app/PWA offline-first pensata per motociclisti e automobilisti. L'obiettivo è offrire un assistente leggero per velocità, limiti e avvisi preventivi su controlli fissi mappati, senza diventare un navigatore completo.
+**Speed Guard** è un MVP di web app/PWA offline-first pensata per guidaciclisti e automobilisti. L'obiettivo è offrire un assistente leggero per velocità, limiti e avvisi preventivi su controlli fissi mappati, senza diventare un navigatore completo.
 
 > Posizionamento del prodotto: **assistente alla guida e al rispetto dei limiti**, non app per eludere controlli.
 
 ## Funzionalità incluse nell'MVP
 
 - Dashboard ad alto contrasto con velocità GPS, limite stimato, stato online/offline e prossimo controllo compatibile.
-- Modalità moto con UI minimale, caratteri molto grandi, vibrazione e avvisi vocali.
+- Modalità guida con UI minimale, caratteri molto grandi, vibrazione e avvisi vocali.
 - Database demo Italia salvato localmente in IndexedDB.
 - Funzionamento offline tramite Service Worker e cache degli asset principali.
 - Logica base per ridurre falsi avvisi usando distanza, direzione di marcia, bearing e direzione del controllo.
@@ -25,6 +25,15 @@ npm run dev
 Poi aprire l'URL mostrato da Vite. Per GPS reale in browser serve `localhost` o HTTPS. Su smartphone Android il test migliore è tramite APK Capacitor.
 
 > Nota ambiente: in alcuni container o reti aziendali `npm install` può essere bloccato da policy registry. In quel caso installare le dipendenze in un ambiente con accesso a npm o registry mirror autorizzato.
+
+
+## Deploy sito/PWA su Vercel
+
+Non è obbligatorio creare subito un sito Vercel per l'APK, ma è consigliato per avere una demo HTTPS, una landing page e in futuro una pagina download APK o pacchetti database statici. La configurazione `vercel.json` è già inclusa: Vercel deve eseguire `npm run build` e pubblicare la cartella `dist`. Guida completa in `docs/deploy-vercel.md`.
+
+## Pronto per develop e smartphone
+
+La UI è ottimizzata per smartphone web/PWA e APK con safe-area, pulsanti grandi, tab scrollabili e modalità landscape compatta. Checklist completa in `docs/development-ready.md`.
 
 ## Build web
 
@@ -55,7 +64,7 @@ La cartella `android/` è predisposta per il progetto Capacitor; dopo `npx cap a
 Nel MVP i dati sono dimostrativi e vivono in:
 
 ```text
-src/data/cameras-it-demo.json
+public/data/cameras-it-demo.json
 ```
 
 Ogni elemento contiene almeno:
@@ -78,8 +87,9 @@ All'avvio `src/js/database.js` carica il JSON demo, lo salva in IndexedDB e lo r
 
 1. L'app prova a caricare il pacchetto locale demo Italia.
 2. Se IndexedDB contiene già una versione, usa quella per garantire continuità offline.
-3. Se l'utente preme **Aggiorna database**, l'app rilegge il pacchetto demo e aggiorna IndexedDB.
-4. Se il download/lettura fallisce, resta valida l'ultima copia locale funzionante.
+3. Una volta a settimana, se il dispositivo è online, l'app prova un controllo automatico e aggiorna IndexedDB.
+4. Se l'utente preme **Aggiorna ora**, l'app forza l'aggiornamento manuale del pacchetto demo.
+5. Se il download/lettura fallisce, resta valida l'ultima copia locale funzionante.
 
 ### Evoluzione produzione
 
@@ -146,9 +156,11 @@ src/
   js/speech.js
   js/vibration.js
   js/offline.js
+public/
   data/cameras-it-demo.json
+  assets/icon.svg
   manifest.json
-service-worker.js
+  service-worker.js
 capacitor.config.json
 android/
 docs/
@@ -157,6 +169,28 @@ docs/
 ## Privacy
 
 Speed Guard elabora la posizione localmente sul dispositivo. Non richiede account e non invia la posizione a server esterni. Internet serve solo per aggiornamenti app o pacchetti dati statici.
+
+## Installare APK su Android
+
+1. Generare l'APK con `npm run apk:debug` o una release firmata da Android Studio.
+2. Copiare il file `.apk` sul telefono, oppure caricarlo in `public/downloads/speed-guard.apk` per farlo scaricare direttamente dal sito.
+3. Su Android aprire il file e autorizzare l'installazione da origini sconosciute per il browser/file manager usato.
+4. Installare l'app, aprirla e concedere il permesso posizione.
+5. Per uso reale in guida servirà la versione Capacitor con Foreground Service Android per GPS a schermo spento.
+
+## Visionare mappe, controlli e segnalazioni
+
+La schermata **Mappe e download** ora mostra una sola vista mappa: OpenStreetMap quando online e la mappa locale scaricata quando offline. Il download delle aree resta nella lista Stati/aree sotto, così non ci sono riquadri duplicati.
+
+La schermata **Segnalazioni locali** permette di salvare promemoria personali per lavori, controlli fissi, possibili code, pericoli e note. Di default i dati restano solo sul dispositivo; opzionalmente puoi collegare un Google Sheet tramite una API Vercel server-side, senza mostrare l'URL del foglio nel codice frontend e senza creare una rete live di pattuglie o controlli mobili. Guida in `docs/google-sheet-reports.md`.
+
+## Traffico e code offline: cosa è legale e realistico
+
+Una vera analisi traffico live non può funzionare completamente offline senza dati aggiornati esterni. Per restare gratuita, privacy-first e legale al 100%, l'MVP supporta solo promemoria locali e in futuro potrà usare dati ufficiali/open data scaricabili, statistiche storiche anonime o rilevamento locale di rallentamento basato sul GPS del dispositivo. Non verranno inviate posizioni utente né create segnalazioni live di pattuglie o controlli mobili.
+
+## Risparmio batteria
+
+La modalità guida include un risparmio batteria UI: quando non ci sono eventi entro la distanza configurata, l'interfaccia viene oscurata; torna luminosa quando un evento entra nel raggio, di default 2 km. Una PWA non può spegnere fisicamente lo schermo o cambiare la luminosità di sistema: per farlo davvero su Android serve un plugin Capacitor/native Foreground Service.
 
 ## Limiti noti dell'MVP
 

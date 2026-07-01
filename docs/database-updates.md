@@ -5,10 +5,12 @@ Questo documento descrive il comportamento attuale dell'MVP e il flusso consigli
 ## Stato MVP
 
 - Pacchetto disponibile: **Italia demo**.
-- File sorgente: `src/data/cameras-it-demo.json`.
+- File sorgente: `public/data/cameras-it-demo.json`.
 - Persistenza locale: IndexedDB, database `speed-guard-db`, object store `packages`.
-- Aggiornamento manuale: pulsante **Aggiorna database** nella schermata **Mappe e download**.
+- Aggiornamento manuale: pulsante **Aggiorna ora** nella schermata **Mappe e download**.
+- Aggiornamento automatico: controllo massimo settimanale quando l'app è online.
 - Fallback offline: se l'app ha già salvato un pacchetto valido, continua a usare quello anche senza internet.
+- Visualizzazione: mappa schematica offline e lista controlli nella schermata **Mappe e download**.
 
 ## Schema record controllo
 
@@ -76,7 +78,7 @@ In produzione l'app dovrebbe leggere un manifest leggero, senza inviare posizion
 
 1. Salvare in IndexedDB `lastAutoCheckAt`.
 2. All'avvio, se online e sono passati almeno 7 giorni, scaricare solo il manifest.
-3. Se esiste una versione più recente dell'area già scaricata, scaricare il pacchetto in background quando l'utente non è in modalità moto.
+3. Se esiste una versione più recente dell'area già scaricata, scaricare il pacchetto in background quando l'utente non è in modalità guida.
 4. Validare e salvare atomicamente.
 5. Mostrare in UI: `Aggiornato oggi`, `Aggiornato 3 giorni fa` o `Aggiornamento disponibile`.
 
