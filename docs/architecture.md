@@ -67,3 +67,10 @@ L'MVP ora usa OpenStreetMap come mappa vera gratuita quando il dispositivo è on
 ## Endpoint privato segnalazioni
 
 La condivisione Google Sheet passa da `/api/report`, una funzione Vercel server-side. L'URL Apps Script resta in `GOOGLE_SHEET_WEBHOOK_URL` e non viene mostrato nell'interfaccia utente.
+
+
+## Risparmio batteria e schermo
+
+Nel web/PWA l'app non può spegnere lo schermo dello smartphone né modificare la luminosità di sistema per motivi di sicurezza del browser. L'MVP implementa quindi un risparmio UI: in modalità moto oscura l'interfaccia e la riattiva quando un evento è entro `wakeDistance` metri, default 2000 m.
+
+Per Android nativo la versione Capacitor dovrà aggiungere un plugin/Foreground Service che possa gestire wake lock, luminosità finestra e notifica persistente rispettando le policy Android.

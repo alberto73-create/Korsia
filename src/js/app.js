@@ -34,7 +34,7 @@ const limit = () => state.next?.speedLimit || '—';
 
 function render() {
   document.getElementById('app').innerHTML = `
-    <div class="app">
+    <div class="app ${batterySaverClass()}">
       <header class="topbar">
         <div class="brand brand-row">
           <img class="brand-logo" src="/assets/icon.svg" alt="Speed Guard logo"/>
@@ -69,6 +69,21 @@ function tab(id, label) {
   return `<button class="tab ${state.screen === id ? 'active' : ''}" data-screen="${id}">${label}</button>`;
 }
 
+
+
+function batterySaverClass() {
+  if (!state.settings.batterySaver || !state.moto) return '';
+  const distance = state.next?.distance;
+  const shouldWake = distance != null && distance <= state.settings.wakeDistance;
+  return shouldWake ? 'battery-awake' : 'battery-dim';
+}
+
+function batterySaverStatus() {
+  if (!state.settings.batterySaver) return 'Risparmio batteria off';
+  const distance = state.next?.distance;
+  if (distance != null && distance <= state.settings.wakeDistance) return `Schermo attivo: evento entro ${formatDistance(distance)}`;
+  return `Risparmio attivo fino a ${formatDistance(state.settings.wakeDistance)} dall'evento`;
+}
 
 function speedStatusClass() {
   const currentLimit = Number(limit());
@@ -129,6 +144,7 @@ function moto() {
           <span class="pill">${state.settings.vibration ? 'Vibrazione attiva' : 'Vibrazione off'}</span>
           <span class="pill">${state.settings.voice ? 'Avvisi vocali attivi' : 'Voce off'}</span>
           <span class="pill">${state.moto ? 'Background attivo*' : 'In pausa'}</span>
+          <span class="pill">${batterySaverStatus()}</span>
         </div>
         <div class="quick-report"><h3>Segnala rapido</h3>${quickReportButtons()}</div>
         <p class="muted">* In APK Android Capacitor: usare Foreground Service per GPS persistente a schermo spento.</p>
@@ -148,6 +164,7 @@ function maps() {
         </div>
         <p class="muted">Se il file non esiste ancora, carica l'APK generato in <code>public/downloads/speed-guard.apk</code>.</p>
         ${realMap()}
+        ${offlineMap()}
         ${mapPreview()}
         <div class="list">
           ${['Italia demo', 'Francia', 'Svizzera', 'Austria', 'Europa'].map((name, index) => `
@@ -186,6 +203,43 @@ function realMap() {
     <div class="real-map-wrap">
       <iframe class="real-map" title="Mappa OpenStreetMap" src="${src}" loading="lazy"></iframe>
       <p class="muted">Mappa gratuita OpenStreetMap online. Nessuna posizione utente viene inviata da Speed Guard; il riquadro carica tile OSM dal browser.</p>
+    </div>`;
+}
+
+
+function offlineMap() {
+  if (!state.cameras.length) {
+    return '<div class="offline-map"><span class="muted">Nessun pacchetto offline disponibile.</span></div>';
+  }
+
+  const latitudes = state.cameras.map((camera) => camera.latitude);
+  const longitudes = state.cameras.map((camera) => camera.longitude);
+  const minLat = Math.min(...latitudes);
+  const maxLat = Math.max(...latitudes);
+  const minLon = Math.min(...longitudes);
+  const maxLon = Math.max(...longitudes);
+  const latRange = maxLat - minLat || 1;
+  const lonRange = maxLon - minLon || 1;
+  const toPoint = (camera) => ({
+    x: 40 + ((camera.longitude - minLon) / lonRange) * 720,
+    y: 300 - ((camera.latitude - minLat) / latRange) * 240,
+  });
+  const route = state.cameras.map(toPoint).map((point) => `${point.x},${point.y}`).join(' ');
+  const markers = state.cameras.map((camera) => {
+    const point = toPoint(camera);
+    return `<g><circle cx="${point.x}" cy="${point.y}" r="24" class="offline-marker"/><text x="${point.x}" y="${point.y + 7}" text-anchor="middle" class="offline-marker-text">${camera.speedLimit}</text></g>`;
+  }).join('');
+
+  return `
+    <div class="offline-map-wrap">
+      <div class="label">Mappa offline locale</div>
+      <svg class="offline-map" viewBox="0 0 800 340" role="img" aria-label="Mappa offline dei controlli scaricati">
+        <rect width="800" height="340" rx="22" class="offline-map-bg"/>
+        <path d="M40 280 C220 210 330 235 460 170 S620 82 760 56" class="offline-road secondary-road"/>
+        <polyline points="${route}" class="offline-road"/>
+        ${markers}
+      </svg>
+      <p class="muted">Questa vista usa il pacchetto locale scaricato e resta visibile senza rete. Per strade offline complete servono pacchetti PMTiles/MBTiles.</p>
     </div>`;
 }
 
@@ -282,6 +336,8 @@ function settings() {
         ${range('secondDistance', 'Secondo avviso', 250, 1000)}
         ${range('volume', 'Volume voce', 0, 1, 0.1)}
         ${range('overspeedTolerance', 'Soglia rosso oltre limite (km/h)', 1, 15, 1)}
+        <label class="toggle">Risparmio batteria moto<input type="checkbox" id="batterySaver" ${state.settings.batterySaver ? 'checked' : ''}></label>
+        ${range('wakeDistance', 'Riattiva schermo/UI prima evento (m)', 500, 5000, 250)}
         <label class="toggle">Condividi segnalazioni su Google Sheet privato<input type="checkbox" id="shareReports" ${state.settings.shareReports ? 'checked' : ''}></label>
         <p class="muted">Facile e non visibile a tutti: configura l'URL Google Sheet in Vercel come variabile server <code>GOOGLE_SHEET_WEBHOOK_URL</code>. Nell'app resta solo questo interruttore.</p>
       </div>
@@ -318,12 +374,12 @@ function bind() {
 
   $('#toggleMoto').onclick = toggleMoto;
 
-  ['voice', 'vibration', 'shareReports'].forEach((key) => {
+  ['voice', 'vibration', 'shareReports', 'batterySaver'].forEach((key) => {
     const input = $(`#${key}`);
     if (input) input.onchange = () => updateSetting(key, input.checked);
   });
 
-  ['firstDistance', 'secondDistance', 'volume', 'overspeedTolerance'].forEach((key) => {
+  ['firstDistance', 'secondDistance', 'volume', 'overspeedTolerance', 'wakeDistance'].forEach((key) => {
     const input = $(`#${key}`);
     if (input) input.oninput = () => updateSetting(key, Number(input.value));
   });

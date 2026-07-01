@@ -176,13 +176,17 @@ Speed Guard elabora la posizione localmente sul dispositivo. Non richiede accoun
 
 ## Visionare mappe, controlli e segnalazioni
 
-La schermata **Mappe e download** ora mostra una mappa vera OpenStreetMap quando sei online, più una vista locale dei controlli e un pacchetto GeoJSON scaricabile. Per mappe offline complete vere serviranno pacchetti PMTiles/MBTiles in una fase successiva.
+La schermata **Mappe e download** ora mostra una mappa vera OpenStreetMap quando sei online, una mappa locale visibile senza rete basata sui dati scaricati e un pacchetto GeoJSON scaricabile. Per mappe offline complete con tutte le strade vere serviranno pacchetti PMTiles/MBTiles in una fase successiva.
 
 La schermata **Segnalazioni locali** permette di salvare promemoria personali per lavori, controlli fissi, possibili code, pericoli e note. Di default i dati restano solo sul dispositivo; opzionalmente puoi collegare un Google Sheet tramite una API Vercel server-side, senza mostrare l'URL del foglio nel codice frontend e senza creare una rete live di pattuglie o controlli mobili. Guida in `docs/google-sheet-reports.md`.
 
 ## Traffico e code offline: cosa è legale e realistico
 
 Una vera analisi traffico live non può funzionare completamente offline senza dati aggiornati esterni. Per restare gratuita, privacy-first e legale al 100%, l'MVP supporta solo promemoria locali e in futuro potrà usare dati ufficiali/open data scaricabili, statistiche storiche anonime o rilevamento locale di rallentamento basato sul GPS del dispositivo. Non verranno inviate posizioni utente né create segnalazioni live di pattuglie o controlli mobili.
+
+## Risparmio batteria
+
+La modalità moto include un risparmio batteria UI: quando non ci sono eventi entro la distanza configurata, l'interfaccia viene oscurata; torna luminosa quando un evento entra nel raggio, di default 2 km. Una PWA non può spegnere fisicamente lo schermo o cambiare la luminosità di sistema: per farlo davvero su Android serve un plugin Capacitor/native Foreground Service.
 
 ## Limiti noti dell'MVP
 
